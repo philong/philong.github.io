@@ -1,0 +1,9 @@
+bepo.png
+https://bepo.fr/wiki/Fichier:Bepo-1.1-base.png
+Attribution: Ergodis
+License: Creative Commons Attribution-NonCommercial-ShareAlike http://creativecommons.org/licenses/by-nc-sa/4.0/
+
+azerty.svg
+https://commons.wikimedia.org/wiki/File:KB_France.svg
+Attribution: Yitscar
+License:  Creative Commons Attribution-ShareAlike 3.0 Unported https://creativecommons.org/licenses/by-sa/3.0/
