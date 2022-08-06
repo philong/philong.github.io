@@ -40,6 +40,7 @@ $(document).ready(function() {
         set_level(1);
     }
     $(document).keypress(keyHandler);
+    $(document).keyup(keyupHandler);
 
     showActiveLayoutKeyboard();
 });
@@ -115,7 +116,16 @@ function map_key(e, layout) {
     return map[code] || fallback_map[code];
 }
 
+const keyPresses = {};
+
+function keyupHandler(e) {
+    keyPresses[e.code] = false;
+}
+
 function keyHandler(e) {
+    if (keyPresses[e.code]) return;
+    keyPresses[e.code] = true;
+
     start_stats();
 
     var key = char_to_key(e);
@@ -269,6 +279,7 @@ function render_level() {
             $customCharsModal.find('textarea').val(customChars);
 
             $(document).off('keypress');
+            $(document).off('keyup');
         });
 
         $customCharsModalOkButton = $('#custom-chars-modal--ok-button');
@@ -284,6 +295,7 @@ function render_level() {
             save();
 
             $(document).keypress(keyHandler);
+            $(document).keyup(keyupHandler);
         });
     }
 }
