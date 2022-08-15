@@ -192,32 +192,65 @@ function load() {
 
 
 function load_audio() {
+    create_audio_context();
     audio.samples = {};
     load_audio_sample("correct", "click.mp3", 336);
     load_audio_sample("mistake", "clack.mp3", 304);
     load_audio_sample("level_up", "ding.wav", 1684);
 }
 
-
-function load_audio_sample(name, url, duration) {
-    const sample = $(new Audio(url));
-    sample.prop("playDuration", duration);
-    audio.samples[name] = sample;
+let create_audio_context = function () {
+    audio.context = new (window.AudioContext || window.webkitAudioContext)();
 }
 
-
-function play_audio_sample(name) {
-    const sample = audio.samples[name];
-    if (!sample) return;
-    const playDate = sample.prop("playDate");
-    if (moment() - playDate <= sample.prop("playDuration") + 200) {
-        (new Audio(sample.attr("src"))).play();
-    } else {
-        sample[0].play();
-        sample.prop("playDate", moment());
+let load_audio_sample = function (name, url) {
+    if (!audio.samples[name]) {
+        // fetch the .wav file via XMLHttpRequest as jQuery doesn't support 'arraybuffer' dataType
+        var request = new XMLHttpRequest();
+        request.open("GET", url, true);
+        request.responseType = "arraybuffer";
+        request.onload = function () {
+            audio.context.decodeAudioData(request.response).then(function (buffer) {
+                audio.samples[name] = buffer;
+            });
+        };
+        request.send();
     }
 }
 
+let play_audio_sample = function (name) {
+    if (audio.samples[name]) {
+        var source = audio.context.createBufferSource();
+        source.buffer = audio.samples[name];
+        source.onended
+        source.connect(audio.context.destination);
+        source.start();
+    }
+}
+
+if (!location.hostname) {
+    create_audio_context = function () {
+        // Nothing
+    }
+
+    load_audio_sample = function (name, url, duration) {
+        const sample = $(new Audio(url));
+        sample.prop("playDuration", duration);
+        audio.samples[name] = sample;
+    }
+
+    play_audio_sample = function (name) {
+        const sample = audio.samples[name];
+        if (!sample) return;
+        const playDate = sample.prop("playDate");
+        if (moment() - playDate <= sample.prop("playDuration") + 200) {
+            (new Audio(sample.attr("src"))).play();
+        } else {
+            sample[0].play();
+            sample.prop("playDate", moment());
+        }
+    }
+}
 
 function render() {
     render_layout();
