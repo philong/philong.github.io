@@ -499,7 +499,13 @@ function generate_word() {
             word += c;
         }
     }
-    return word;
+    const word_char_count = new Set(word).size;
+    if (word_char_count > 3) {
+        return word
+    }
+    const random_word = generate_word_random();
+    const random_word_char_count = new Set(random_word).size;
+    return word_char_count < random_word_char_count ? random_word : word;
 }
 
 function strip_accents(str) {
